@@ -1,0 +1,17 @@
+{
+  "name": "12306",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@3846masa/axios-cookiejar-support": "^0.3.4",
+    "axios": "^0.17.1",
+    "random-useragent": "^0.3.1"
+  }
+}
