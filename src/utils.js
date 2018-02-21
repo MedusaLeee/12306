@@ -2,10 +2,21 @@ const axios = require('axios');
 const tough = require('tough-cookie');
 const rua = require('random-useragent');
 const log4js = require('log4js');
+const path = require('path');
+const { spawn } = require('child_process');
+const querystring = require('querystring');
 const axiosCookieJarSupport = require('@3846masa/axios-cookiejar-support').default;
 
 axiosCookieJarSupport(axios);
 const cookieJar = new tough.CookieJar();
+
+const getLogger = (category) => {
+    const logger = log4js.getLogger(category);
+    logger.level = process.env.LEVEL || 'info';
+    return logger;
+};
+
+const logger = getLogger('Utils');
 
 /**
  * 使用cookieJar封装axios的get请求
@@ -53,7 +64,8 @@ const httpPost = async(url, body, option) => {
         withCredentials: true,
         ...option
     };
-    return axios.post(url, body, newOption);
+    console.log('body: ', body);
+    return axios.post(url, querystring.stringify(body), newOption);
 };
 
 /**
@@ -62,21 +74,34 @@ const httpPost = async(url, body, option) => {
  * @returns {string}
  */
 const getCaptchaString = (numberString) => {
-    const positionArr = ['43,47', '43,37', '114,35', '186,37', '255,39', '40,111', '111,107', '177,112', '252,113'];
+    const positionArr = ['35,35','105,35','175,35','245,35','35,105','105,105','175,105','245,105'];
     const numberArr = numberString.split(',');
     return numberArr.reduce((a, b) => a.concat(positionArr[b - 1]), []).join(',');
 };
 
-const getLogger = (category) => {
-    const logger = log4js.getLogger(category);
-    logger.level = process.env.LEVEL || 'info';
-    return logger;
+const imageView = async(imageStream, ) => {
+    return new Promise((resolve, reject) => {
+        const jarPath = path.resolve(__dirname, '../lib/imageViewer-1.0-shaded.jar');
+        const child = spawn('java', ['-jar', jarPath]);
+        child.on('exit', (code) => {
+            logger.debug('imageView exec exit: ', code);
+        });
+        child.on('error', (err) => {
+            logger.error('imageView exec err: ', err);
+            reject(err);
+        });
+        const wStream = imageStream.pipe(child.stdin);
+        wStream.on('close', () => {
+            resolve(child);
+        });
+    });
 };
 
 module.exports = {
     getCaptchaString,
     httpGet,
     httpPost,
-    getLogger
+    getLogger,
+    imageView
 };
 
