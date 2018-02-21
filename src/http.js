@@ -1,4 +1,4 @@
-const { httpGet, getLogger } = require('./utils');
+const { httpGet, httpPost, getLogger } = require('./utils');
 const Promise = require('bluebird');
 
 const logger = getLogger('Http');
@@ -32,6 +32,9 @@ const getLoginCaptcha = async() => {
         const url = 'https://kyfw.12306.cn/passport/captcha/captcha-image?' +
             `login_site=E&module=login&rand=sjrand&${Math.random()}`;
         const option = {
+            headers: {
+                'Referer': 'https://kyfw.12306.cn/otn/passport?redirect=/otn/'
+            },
             responseType: 'stream'
         };
         const resp = await httpGet(url, option);
@@ -42,7 +45,41 @@ const getLoginCaptcha = async() => {
     }
 };
 
+/**
+ * 登录验证码校验
+ * @param positionStr
+ * @returns {Promise<*>}
+ */
+const loginCaptchaCheck = async(positionStr) => {
+    try {
+        const url = 'https://kyfw.12306.cn/passport/captcha/captcha-check';
+        const option = {
+            headers: {
+                'Referer': 'https://kyfw.12306.cn/otn/passport?redirect=/otn/'
+            }
+        };
+        const body = {
+            answer: positionStr,
+            login_site: 'E',
+            rand: 'sjrand'
+        };
+        const resp = await httpPost(url, body, option);
+        if (resp.status === 200) {
+            if (resp.data.result_code !== '4') {
+                return true;
+            }
+            logger.error('loginCaptchaCheck result error: ', resp.data);
+            return Promise.reject(resp.data);
+        }
+        logger.error('loginCaptchaCheck status error: ', resp.status, resp.data);
+        return Promise.reject(resp.status);
+    } catch (e) {
+        logger.error('loginCaptchaCheck error: ', e);
+        return Promise.reject(e);
+    }
+};
 module.exports = {
     redirectToLogin,
-    getLoginCaptcha
+    getLoginCaptcha,
+    loginCaptchaCheck
 };
