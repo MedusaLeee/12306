@@ -1,6 +1,7 @@
 const axios = require('axios');
 const tough = require('tough-cookie');
 const rua = require('random-useragent');
+const log4js = require('log4js');
 const axiosCookieJarSupport = require('@3846masa/axios-cookiejar-support').default;
 
 axiosCookieJarSupport(axios);
@@ -39,8 +40,15 @@ const getCaptchaString = (numberString) => {
     return numberArr.reduce((a, b) => a.concat(positionArr[b - 1]), []).join(',');
 };
 
+const getLogger = (category) => {
+    const logger = log4js.getLogger(category);
+    logger.level = process.env.LEVEL || 'info';
+    return logger;
+};
+
 module.exports = {
     getCaptchaString,
-    httpGet
+    httpGet,
+    getLogger
 };
 
