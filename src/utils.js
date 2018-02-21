@@ -18,6 +18,8 @@ const httpGet = async(url, option) => {
     const headers = {
         'User-Agent': ua,
         'Host': 'kyfw.12306.cn',
+        'Origin': 'https://kyfw.12306.cn',
+        'Pragma': 'no-cache',
         ...option.headers
     };
     option.headers = headers;
@@ -41,6 +43,8 @@ const httpPost = async(url, body, option) => {
     const headers = {
         'User-Agent': ua,
         'Host': 'kyfw.12306.cn',
+        'Origin': 'https://kyfw.12306.cn',
+        'Pragma': 'no-cache',
         ...option.headers
     };
     option.headers = headers;

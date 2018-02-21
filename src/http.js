@@ -33,7 +33,7 @@ const getLoginCaptcha = async() => {
             `login_site=E&module=login&rand=sjrand&${Math.random()}`;
         const option = {
             headers: {
-                'Referer': 'https://kyfw.12306.cn/otn/passport?redirect=/otn/'
+                'Referer': 'https://kyfw.12306.cn/otn/login/init'
             },
             responseType: 'stream'
         };
@@ -55,7 +55,7 @@ const loginCaptchaCheck = async(positionStr) => {
         const url = 'https://kyfw.12306.cn/passport/captcha/captcha-check';
         const option = {
             headers: {
-                'Referer': 'https://kyfw.12306.cn/otn/passport?redirect=/otn/'
+                'Referer': 'https://kyfw.12306.cn/otn/login/init'
             }
         };
         const body = {
@@ -65,7 +65,8 @@ const loginCaptchaCheck = async(positionStr) => {
         };
         const resp = await httpPost(url, body, option);
         if (resp.status === 200) {
-            if (resp.data.result_code !== '4') {
+            if (resp.data.result_code === '4') {
+                logger.debug('loginCaptchaCheck resp: ', resp.data);
                 return true;
             }
             logger.error('loginCaptchaCheck result error: ', resp.data);
@@ -78,8 +79,46 @@ const loginCaptchaCheck = async(positionStr) => {
         return Promise.reject(e);
     }
 };
+
+/**
+ * 登录接口
+ * @param username
+ * @param password
+ * @returns {Promise<*>}
+ */
+const doLogin = async(username, password) => {
+    try {
+        const url = 'https://kyfw.12306.cn/passport/web/login';
+        const option = {
+            headers: {
+                'Referer': 'https://kyfw.12306.cn/otn/login/init'
+            }
+        };
+        const body = {
+            username,
+            password,
+            appid: 'otn'
+        };
+        const resp = await httpPost(url, body, option);
+        if (resp.status !== 200) {
+            logger.error('doLogin status error: ', resp.status, resp.data);
+            return Promise.reject(resp.status);
+        }
+        if (resp.data.result_code !== 0) {
+            logger.error('doLogin result code error: ', resp.data);
+            return Promise.reject(resp.data.result_code);
+        }
+        logger.debug('doLogin success: ', resp.data);
+        return true;
+    } catch (e) {
+        logger.error('doLogin error: ', e);
+        return Promise.reject(e);
+    }
+};
+
 module.exports = {
     redirectToLogin,
     getLoginCaptcha,
-    loginCaptchaCheck
+    loginCaptchaCheck,
+    doLogin
 };
