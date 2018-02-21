@@ -116,9 +116,68 @@ const doLogin = async(username, password) => {
     }
 };
 
+/**
+ * 登录成功后的session校验
+ * @returns {Promise<*>}
+ */
+const authUamtk = async() => {
+    try {
+        const url = 'https://kyfw.12306.cn/passport/web/auth/uamtk';
+        const option = {
+            headers: {
+                'Referer': 'https://kyfw.12306.cn/otn/passport?redirect=/otn/login/userLogin'
+            }
+        };
+        const body = {
+            appid: 'otn'
+        };
+        const resp = await httpPost(url, body, option);
+        if (resp.status !== 200) {
+            logger.error('authUamtk status error: ', resp.status, resp.data);
+            return Promise.reject(resp.status);
+        }
+        logger.debug('authUamtk success: ', resp.data);
+        return resp.data.newapptk;
+    } catch (e) {
+        logger.error('authUamtk error: ', e);
+        return Promise.reject(e);
+    }
+};
+
+/**
+ * 客户端session校验
+ * @param newAppTk
+ * @returns {Promise<*>}
+ */
+const uamAuthClient = async(newAppTk) => {
+    try {
+        const url = 'https://kyfw.12306.cn/otn/uamauthclient';
+        const option = {
+            headers: {
+                'Referer': 'https://kyfw.12306.cn/otn/passport?redirect=/otn/login/userLogin'
+            }
+        };
+        const body = {
+            tk: newAppTk
+        };
+        const resp = await httpPost(url, body, option);
+        if (resp.status !== 200) {
+            logger.error('uamAuthClient status error: ', resp.status, resp.data);
+            return Promise.reject(resp.status);
+        }
+        logger.debug('uamAuthClient success: ', resp.data);
+        return resp.data.apptk;
+    } catch (e) {
+        logger.error('uamAuthClient error: ', e);
+        return Promise.reject(e);
+    }
+};
+
 module.exports = {
     redirectToLogin,
     getLoginCaptcha,
     loginCaptchaCheck,
-    doLogin
+    doLogin,
+    authUamtk,
+    uamAuthClient
 };
