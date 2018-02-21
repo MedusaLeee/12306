@@ -12,6 +12,10 @@
   "dependencies": {
     "@3846masa/axios-cookiejar-support": "^0.3.4",
     "axios": "^0.17.1",
-    "random-useragent": "^0.3.1"
+    "bluebird": "^3.5.1",
+    "chalk": "^2.3.1",
+    "log4js": "^2.5.3",
+    "random-useragent": "^0.3.1",
+    "readline-sync": "^1.4.9"
   }
 }
