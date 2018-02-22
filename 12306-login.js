@@ -15,7 +15,7 @@ const login = async() => {
     });
     console.log(chalk.green('正在获取12306登录验证码...'));
     const stream = await http.getLoginCaptcha();
-    console.log(chalk.green('正在加载验证码请等待...'));
+    console.log(chalk.green('正在加载验证码，请等待...'));
     const imageViewProcess = await utils.imageView(stream);
     const captchaNum = rs.question(chalk.green.underline('请输入正确验证码的图片编号?') + '\n');
     imageViewProcess.kill('SIGHUP');
@@ -31,7 +31,7 @@ const login = async() => {
     console.log(chalk.green('正在执行oauth客户端会话校验...'));
     const resp = await http.uamAuthClient(newAppTk);
     logger.debug('resp: ', resp);
-    console.log(chalk.green('登录成功...'));
+    console.log(chalk.green(`登录成功，欢迎 ${resp.username}。`));
 };
 
 login().then();

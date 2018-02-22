@@ -64,7 +64,6 @@ const httpPost = async(url, body, option) => {
         withCredentials: true,
         ...option
     };
-    console.log('body: ', body);
     return axios.post(url, querystring.stringify(body), newOption);
 };
 

@@ -166,7 +166,10 @@ const uamAuthClient = async(newAppTk) => {
             return Promise.reject(resp.status);
         }
         logger.debug('uamAuthClient success: ', resp.data);
-        return resp.data.apptk;
+        return {
+            appTk: resp.data.apptk,
+            username: resp.data.username
+        };
     } catch (e) {
         logger.error('uamAuthClient error: ', e);
         return Promise.reject(e);
