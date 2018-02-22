@@ -13,7 +13,7 @@
 
 ### 效果
 
-![示例](./constants/12306-login.gif)
+<iframe height=600 width=450 src="https://github.com/MedusaLeee/12306/blob/master/constants/12306-login.gif">
 
 ### 使用
 
