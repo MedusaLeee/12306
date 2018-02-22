@@ -13,7 +13,7 @@
 
 ### 效果
 
-![](https://github.com/MedusaLeee/12306/blob/master/constants/12306-login.gif)
+![image](https://github.com/MedusaLeee/12306/blob/master/constants/12306-login.gif?raw=true)
 
 ### 使用
 
