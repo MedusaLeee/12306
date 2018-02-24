@@ -13,6 +13,8 @@
 
 ### 效果
 
+> 可能这个gif比较大，在safari上效果不好，请使用chrome查看
+
 ![image](https://github.com/MedusaLeee/12306/blob/master/constants/12306-login.gif)
 
 ### 使用
