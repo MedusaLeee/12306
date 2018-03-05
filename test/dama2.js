@@ -1,6 +1,8 @@
 const path = require('path');
 const Promise = require('bluebird');
 const Dama2 = require('dama2');
+const util = require('util');
+const setTimeoutPromise = util.promisify(setTimeout);
 
 const username = process.argv[2];
 const password = process.argv[3];
@@ -33,14 +35,7 @@ class Damatu {
         return Promise.fromCallback(cb => this.dama2.getResult(id, cb));
     }
     async waitResult(id, attemptNum) {
-        const wait = () => {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve();
-                }, 1000);
-            });
-        };
-        await wait();
+        await setTimeoutPromise(1000);
         if (attemptNum > 0) {
             try {
                 console.log('尝试次数：', attemptNum);
@@ -51,7 +46,7 @@ class Damatu {
                 return await this.waitResult(id, newAttemptNum);
             }
         }
-        return Promise.reject(new Error('重试次数内未得到查询结果'))
+        return Promise.reject(new Error('重试次数内未得到查询结果'));
     }
     async decodeFileAndWaitResult(imagePath, attemptNum) {
         const { id } = await this.decodeFile(imagePath);
